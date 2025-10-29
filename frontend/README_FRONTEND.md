@@ -1,0 +1,1 @@
+Frontend README\n1. Install: npm install\n2. Run dev: npm run dev\n3. Tailwind is configured; run build for production.\n

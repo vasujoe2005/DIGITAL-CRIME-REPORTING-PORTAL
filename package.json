@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "lucide-react": "^0.548.0",
+    "multer-gridfs-storage": "^5.0.2",
+    "react-icons": "^5.5.0",
+    "recharts": "^3.3.0"
+  }
+}
