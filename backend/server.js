@@ -1,15 +1,21 @@
+// Load environment variables
 require('dotenv').config({ path: './backend/.env' });
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const multer = require('multer');
+const path = require('path');
+
+// Route imports
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const complaintRoutes = require('./routes/complaints');
 const userRoutes = require('./routes/users');
+
+// GridFS import (optional if using file storage)
 const { connectGridFS } = require('./utils/gridfs');
-const multer = require('multer');
-const path = require('path');
 
 const app = express();
 
@@ -18,19 +24,24 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
 
-// Routes
+// Test route (✅ visible in browser)
+app.get('/', (req, res) => {
+  res.send('✅ Digital Crime Reporting Backend is running successfully!');
+});
+
+// API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/users', userRoutes);
 
-// Multer setup
+// Multer setup (file upload)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/evidence');
   },
   filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, uniqueName + path.extname(file.originalname));
   }
 });
@@ -57,5 +68,6 @@ async function connectDB() {
 }
 connectDB();
 
-// ✅ Export the server for Vercel
+// ✅ Do not use app.listen() on Vercel
+// Export Express app for serverless environment
 module.exports = app;
