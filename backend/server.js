@@ -14,31 +14,40 @@ const adminRoutes = require('./routes/admin');
 const complaintRoutes = require('./routes/complaints');
 const userRoutes = require('./routes/users');
 
-// GridFS import (optional if using file storage)
+// GridFS import (optional if using for large files)
 const { connectGridFS } = require('./utils/gridfs');
 
 const app = express();
 
-// Middleware
+// ✅ Middleware
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Test route (✅ visible in browser)
+// ✅ Root test route (check in browser)
 app.get('/', (req, res) => {
-  res.send('✅ Digital Crime Reporting Backend is running successfully!');
+  res.send(`
+    <h2>✅ Digital Crime Reporting Backend is Running Successfully!</h2>
+    <p>Available API Routes:</p>
+    <ul>
+      <li><a href="/api/auth">/api/auth</a></li>
+      <li><a href="/api/admin">/api/admin</a></li>
+      <li><a href="/api/complaints">/api/complaints</a></li>
+      <li><a href="/api/users">/api/users</a></li>
+    </ul>
+  `);
 });
 
-// API routes
+// ✅ API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/users', userRoutes);
 
-// Multer setup (file upload)
+// ✅ Multer setup (for file uploads)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/evidence');
+    cb(null, path.join(__dirname, 'uploads/evidence'));
   },
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -50,24 +59,29 @@ const fileFilter = (req, file, cb) => {
   const allowed = /jpg|jpeg|png|mp4|pdf|mp3|wav/;
   const ext = path.extname(file.originalname).toLowerCase();
   if (allowed.test(ext)) cb(null, true);
-  else cb(new Error('Only image, video, audio, or PDF files allowed!'));
+  else cb(new Error('Only image, video, audio, or PDF files are allowed!'));
 };
 
 const upload = multer({ storage, fileFilter });
 module.exports.upload = upload;
 
-// MongoDB connection
+// ✅ MongoDB connection
 async function connectDB() {
   try {
     await mongoose.connect(process.env.MONGO_URI);
     console.log('✅ Connected to MongoDB');
     connectGridFS();
   } catch (err) {
-    console.error('❌ MongoDB connection error:', err);
+    console.error('❌ MongoDB connection error:', err.message);
   }
 }
 connectDB();
 
-// ✅ Do not use app.listen() on Vercel
-// Export Express app for serverless environment
+// ✅ Export Express app for Vercel (No app.listen here)
 module.exports = app;
+
+// ✅ Optional: Local development mode
+if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 5000;
+  app.listen(PORT, () => console.log(`🚀 Server running locally on port ${PORT}`));
+}
