@@ -20,14 +20,21 @@ const { connectGridFS } = require('./utils/gridfs');
 const app = express();
 
 // ✅ Middleware
-app.use(cors({
-  origin: 'https://digital-crime-reporting-portal.vercel.app',
-  credentials: true
-}));
-app.options('*', cors({
-  origin: 'https://digital-crime-reporting-portal.vercel.app',
-  credentials: true
-})); // Enable preflight OPTIONS for all routes
+if (process.env.NODE_ENV === 'production') {
+  // Production: Allow only the Vercel frontend
+  app.use(cors({
+    origin: 'https://digital-crime-reporting-portal.vercel.app',
+    credentials: true
+  }));
+  app.options('*', cors({
+    origin: 'https://digital-crime-reporting-portal.vercel.app',
+    credentials: true
+  }));
+} else {
+  // Local development: Allow all origins
+  app.use(cors());
+  app.options('*', cors());
+}
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
