@@ -21,6 +21,7 @@ const app = express();
 
 // ✅ Middleware
 app.use(cors());
+app.options('*', cors()); // Enable preflight OPTIONS for all routes
 app.use(bodyParser.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
