@@ -1,7 +1,0 @@
-services:
-  - type: web
-    name: digital-crime-portal
-    env: docker
-    plan: free
-    dockerfilePath: ./backend/Dockerfile
-    autoDeploy: true
