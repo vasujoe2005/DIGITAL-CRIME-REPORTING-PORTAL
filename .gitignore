@@ -1,2 +1,42 @@
-node_modules
-backend/.env
+# Dependencies
+node_modules/
+jspm_packages/
+web_modules/
+
+# Environment and Credentials
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.env.*
+.env.*
+!.env.example
+
+# Production/Build outputs
+dist/
+build/
+out/
+.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# IDE/Editor configs
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Files
+.DS_Store
+Thumbs.db
